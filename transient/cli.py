@@ -390,3 +390,7 @@ def main() -> None:
     # check.
     click.core._verify_python3_env = lambda: None  # type: ignore
     cli_entry()
+
+
+if __name__ == "__main__":
+    main()
