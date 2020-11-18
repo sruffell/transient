@@ -24,7 +24,9 @@ def _get_version(
 
 _common_options = [
     click.option(
-        "-image-frontend", type=str, help="The location to place per-vm disk images",
+        "-image-frontend",
+        type=str,
+        help="The location to place per-vm disk images",
     ),
     click.option(
         "-image-backend",
@@ -150,13 +152,20 @@ def cli_entry(verbose: int) -> None:
 @click.option("-ssh-user", "-u", type=str, help="User to pass to SSH")
 @click.option("-ssh-bin-name", type=str, help="SSH binary to use")
 @click.option(
-    "-ssh-timeout", type=int, help="Time to wait for SSH connection before failing",
+    "-ssh-timeout",
+    type=int,
+    help="Time to wait for SSH connection before failing",
 )
 @click.option(
-    "-ssh-port", type=int, help="Host port the guest port 22 is connected to",
+    "-ssh-port",
+    type=int,
+    help="Host port the guest port 22 is connected to",
 )
 @click.option(
-    "-ssh-command", "-cmd", type=str, help="Run an ssh command instead of a console",
+    "-ssh-command",
+    "-cmd",
+    type=str,
+    help="Run an ssh command instead of a console",
 )
 @click.option(
     "-ssh-net-driver",
@@ -229,7 +238,9 @@ def run_impl(**kwargs: Any) -> None:
 @with_common_options
 @click.option("-force", "-f", help="Do not prompt before deletion", is_flag=True)
 @click.option(
-    "-name", type=str, help="Delete images associated with the given vm name",
+    "-name",
+    type=str,
+    help="Delete images associated with the given vm name",
 )
 @cli_entry.command("delete")
 def delete_impl(**kwargs: Any) -> None:
@@ -275,7 +286,9 @@ def delete_impl(**kwargs: Any) -> None:
 @click.help_option("-h", "--help")
 @with_common_options
 @click.option(
-    "-name", type=str, help="List disks associated with the given vm name",
+    "-name",
+    type=str,
+    help="List disks associated with the given vm name",
 )
 @cli_entry.command("list")
 def list_impl(**kwargs: Any) -> None:
@@ -321,7 +334,9 @@ def list_impl(**kwargs: Any) -> None:
     help="The time in seconds to wait for the QEMU QMP connection to be established",
 )
 @click.option(
-    "-local", is_flag=True, help="Produce image in the build-dir instead of the backend",
+    "-local",
+    is_flag=True,
+    help="Produce image in the build-dir instead of the backend",
 )
 @click.option("-name", help="The name given to the new image", required=True)
 @click.argument("build-dir")

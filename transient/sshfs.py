@@ -132,7 +132,13 @@ def do_sshfs_mount(
 ) -> None:
 
     sshfs_config = ssh_config.override(
-        args=["-A", "-T", "-o", "LogLevel=ERROR",] + ssh_config.args
+        args=[
+            "-A",
+            "-T",
+            "-o",
+            "LogLevel=ERROR",
+        ]
+        + ssh_config.args
     )
     client = ssh.SshClient(sshfs_config)
     conn = client.connect_piped(timeout=connect_timeout)

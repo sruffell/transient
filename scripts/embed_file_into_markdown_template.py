@@ -6,8 +6,7 @@ import sys
 
 
 def _parse_args() -> argparse.Namespace:
-    """Parse the arguments given on the command line
-    """
+    """Parse the arguments given on the command line"""
     arg_parser = argparse.ArgumentParser()
 
     arg_parser.add_argument(
@@ -38,15 +37,13 @@ def _parse_args() -> argparse.Namespace:
 def _write_markdown_document_to_file(
     markdown_document: str, output_file_path: str
 ) -> None:
-    """Writes the markdown document to the output file path
-    """
+    """Writes the markdown document to the output file path"""
     with open(output_file_path, "w") as output_file:
         output_file.write(markdown_document)
 
 
 def _read_file_to_string(file_path: str) -> str:
-    """Returns the contents of the given file as a string
-    """
+    """Returns the contents of the given file as a string"""
     with open(file_path) as file:
         contents = file.read()
 
@@ -57,10 +54,10 @@ def embed_file_contents_into_markdown_document(
     file_to_embed_path: str, markdown_template_path: str, output_file_path: str
 ) -> None:
     """Embeds the given file into the markdown template, generating a markdown
-       document.
+    document.
 
-       Note that the markdown template must contain the replacement field:
-           {EMBED_FILE_HERE}
+    Note that the markdown template must contain the replacement field:
+        {EMBED_FILE_HERE}
     """
     file_to_embed = _read_file_to_string(file_to_embed_path)
     markdown_template = _read_file_to_string(markdown_template_path)

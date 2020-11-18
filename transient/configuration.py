@@ -12,7 +12,7 @@ from typing import Any, Dict, List, MutableMapping, Optional
 
 class ConfigFileParsingError(Exception):
     """Raised when a parsing error is encountered while loading the
-       configuration file
+    configuration file
     """
 
     inner: toml.TomlDecodeError
@@ -28,7 +28,7 @@ class ConfigFileParsingError(Exception):
 
 class ConfigFileOptionError(Exception):
     """Raised when an invalid configuration option value is encountered in the
-       configuration file
+    configuration file
     """
 
     inner: ValidationError
@@ -39,8 +39,7 @@ class ConfigFileOptionError(Exception):
         self.path = path
 
     def _line_number_of_option_in_config_file(self, option: str) -> Optional[int]:
-        """Returns the line number where the option is found in the config file
-        """
+        """Returns the line number where the option is found in the config file"""
         with open(self.path) as config_file:
             for line_number, line in enumerate(config_file, start=1):
                 if option in line:
@@ -62,8 +61,7 @@ class ConfigFileOptionError(Exception):
 
 
 class CLIArgumentError(Exception):
-    """Raised when an invalid command line argument is encountered
-    """
+    """Raised when an invalid command line argument is encountered"""
 
     inner: ValidationError
 
@@ -100,7 +98,7 @@ class Config(Dict[Any, Any]):
 
 class _TransientConfigSchema(Schema):
     """Defines a common schema for the Transient configurations and validates
-       the fields during deserialization
+    the fields during deserialization
     """
 
     # marshmallow's decorator pre_load() is untyped, forcing
@@ -110,8 +108,7 @@ class _TransientConfigSchema(Schema):
     def remove_unset_options(
         self, config: Dict[Any, Any], **kwargs: Dict[Any, Any]
     ) -> Dict[Any, Any]:
-        """Removes any option that was not set in the command line
-        """
+        """Removes any option that was not set in the command line"""
         config_without_unset_options = {}
         for option, value in config.items():
             if _option_was_set_in_cli(config[option]):
@@ -123,14 +120,13 @@ class _TransientConfigSchema(Schema):
     # to be untyped. Therefore, we ignore it to silence the type checker
     @post_load  # type: ignore
     def create_config(self, data: Dict[Any, Any], **kwargs: Dict[Any, Any]) -> Config:
-        """Returns the Config dictionary after a schema is loaded and validated
-        """
+        """Returns the Config dictionary after a schema is loaded and validated"""
         return Config(**data)
 
 
 class _TransientBuildConfigSchema(_TransientConfigSchema):
     """Defines the schema for the Transient-build configuration and validates
-       the fields during deserialization
+    the fields during deserialization
     """
 
     image_backend = fields.Str(allow_none=True)
@@ -144,10 +140,10 @@ class _TransientBuildConfigSchema(_TransientConfigSchema):
 
 class _TransientListConfigSchema(_TransientConfigSchema):
     """Defines the schema for the Transient-list configuration and validates
-       the fields during deserialization
+    the fields during deserialization
 
-       Note that this class is a wrapper to maintain symmetry with the other
-       schemas.
+    Note that this class is a wrapper to maintain symmetry with the other
+    schemas.
     """
 
     image = fields.List(fields.Str(), missing=[])
@@ -158,7 +154,7 @@ class _TransientListConfigSchema(_TransientConfigSchema):
 
 class _TransientDeleteConfigSchema(_TransientListConfigSchema):
     """Defines the schema for the Transient-delete configuration and validates
-       the fields during deserialization
+    the fields during deserialization
     """
 
     force = fields.Bool(missing=False)
@@ -166,7 +162,7 @@ class _TransientDeleteConfigSchema(_TransientListConfigSchema):
 
 class _TransientRunConfigSchema(_TransientConfigSchema):
     """Defines the schema for the Transient-run configuration and validates the
-       fields during deserialization
+    fields during deserialization
     """
 
     image = fields.List(fields.Str(), missing=[])
@@ -194,8 +190,7 @@ class _TransientRunConfigSchema(_TransientConfigSchema):
 
 
 def _option_was_set_in_cli(option: Any) -> bool:
-    """Returns True if an option was set in the command line
-    """
+    """Returns True if an option was set in the command line"""
     if option is None or option == () or option is False:
         return False
 
@@ -203,8 +198,7 @@ def _option_was_set_in_cli(option: Any) -> bool:
 
 
 def _parse_config_file(config_file_path: str) -> MutableMapping[str, Any]:
-    """Parses the given config file and returns the contents as a dictionary
-    """
+    """Parses the given config file and returns the contents as a dictionary"""
     with open(config_file_path) as file:
         config_file = file.read()
 
@@ -221,7 +215,7 @@ def _replace_hyphens_with_underscores_in_dict_keys(
 ) -> Dict[str, Any]:
     """Replaces hyphens in the dictionary keys with underscores
 
-       This is the expected key format for _TransientConfigSchema
+    This is the expected key format for _TransientConfigSchema
     """
     final_dict = {}
     for k, v in dictionary.items():
@@ -238,8 +232,7 @@ def _replace_hyphens_with_underscores_in_dict_keys(
 def _expand_environment_variables_in_dict_values(
     dictionary: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Expands environment variables in the strings
-    """
+    """Expands environment variables in the strings"""
     final_dict = {}  # type: Dict[str, Any]
     for k, v in dictionary.items():
         # Perform this method recursively for sub-directories
@@ -254,16 +247,14 @@ def _expand_environment_variables_in_dict_values(
 
 
 def _reformat_dict(dictionary: Dict[str, Any]) -> Dict[str, Any]:
-    """Reformats the dictionary using a formatting-pipeline
-    """
+    """Reformats the dictionary using a formatting-pipeline"""
     return _replace_hyphens_with_underscores_in_dict_keys(
         _expand_environment_variables_in_dict_values(dictionary)
     )
 
 
 def _load_config_file(config_file_path: str) -> Config:
-    """Reformats and validates the config file
-    """
+    """Reformats and validates the config file"""
     parsed_config = _parse_config_file(config_file_path)
 
     reformatted_config = _reformat_dict(parsed_config["transient"])
@@ -282,7 +273,7 @@ def _load_config_file(config_file_path: str) -> Config:
 def _consolidate_cli_args_and_config_file(cli_args: Dict[Any, Any]) -> Dict[Any, Any]:
     """Consolidates and returns the CLI arguments and the configuration file
 
-       Note that the CLI arguments take precedence over the configuration file
+    Note that the CLI arguments take precedence over the configuration file
     """
     config = _load_config_file(cli_args["config"])
 
@@ -299,7 +290,7 @@ def _create_transient_config_with_schema(
     config: Dict[Any, Any], schema: _TransientConfigSchema
 ) -> Config:
     """Creates and validates the Config to be used by Transient given the
-       CLI arguments and schema
+    CLI arguments and schema
     """
     try:
         validated_config: Config = schema.load(config)
@@ -311,7 +302,7 @@ def _create_transient_config_with_schema(
 
 def create_transient_build_config(cli_args: Dict[Any, Any]) -> Config:
     """Creates and validates the Config to be used by Transient-build given the
-       CLI arguments
+    CLI arguments
     """
     schema = _TransientBuildConfigSchema()
 
@@ -320,7 +311,7 @@ def create_transient_build_config(cli_args: Dict[Any, Any]) -> Config:
 
 def create_transient_list_config(cli_args: Dict[Any, Any]) -> Config:
     """Creates and validates the Config to be used by Transient-list given the
-       CLI arguments
+    CLI arguments
     """
     schema = _TransientListConfigSchema()
 
@@ -329,7 +320,7 @@ def create_transient_list_config(cli_args: Dict[Any, Any]) -> Config:
 
 def create_transient_delete_config(cli_args: Dict[Any, Any]) -> Config:
     """Creates and validates the Config to be used by Transient-delete given
-       the CLI arguments
+    the CLI arguments
     """
     schema = _TransientDeleteConfigSchema()
 
@@ -338,9 +329,9 @@ def create_transient_delete_config(cli_args: Dict[Any, Any]) -> Config:
 
 def create_transient_run_config(cli_args: Dict[Any, Any]) -> Config:
     """Creates and validates the Config to be used by Transient-run
-       given the CLI arguments and, if specified, a config file
+    given the CLI arguments and, if specified, a config file
 
-       Note that the CLI arguments take precedence over the config file
+    Note that the CLI arguments take precedence over the config file
     """
     if cli_args["config"]:
         config = _consolidate_cli_args_and_config_file(cli_args)
