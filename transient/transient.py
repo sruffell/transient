@@ -369,7 +369,7 @@ class TransientVm:
             logging.error("QEMU Process has died. Exiting")
             return self.__post_run(qemu_returncode)
 
-        sshfs_threads = []
+        sshfs_threads: List[checked_threading.Thread] = []
         for shared_spec in self.config.shared_folder:
             assert self.ssh_config is not None
             local, remote = shared_spec.split(":")
